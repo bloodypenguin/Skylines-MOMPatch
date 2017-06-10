@@ -15,6 +15,8 @@ namespace MOMPatch.Detours
     [TargetType(typeof(MetroOverhaul.LoadingExtension))]
     public class LoadingExtensionDetour : LoadingExtensionBase
     {
+        private LoadMode _cachedMode;
+
         [RedirectMethod]
         public override void OnLevelLoaded(LoadMode mode)
         {
@@ -86,17 +88,6 @@ namespace MOMPatch.Detours
         private static Queue<System.Action> LateBuildUpQueue => (Queue<System.Action>)typeof(LoadingExtension)
             .GetField("LateBuildUpQueue", BindingFlags.NonPublic | BindingFlags.Static)
             .GetValue(null);
-
-        private LoadMode _cachedMode
-        {
-            get => (LoadMode)typeof(LoadingExtension)
-                .GetField("_cachedMode", BindingFlags.NonPublic | BindingFlags.Instance)
-                .GetValue(this);
-
-            set => typeof(LoadingExtension)
-                .GetField("_cachedMode", BindingFlags.NonPublic | BindingFlags.Instance)
-                .SetValue(this, value);
-        }
 
         [RedirectReverse]
         private static void DespawnVanillaMetro()
