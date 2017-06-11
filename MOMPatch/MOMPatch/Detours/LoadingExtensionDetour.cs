@@ -13,14 +13,13 @@ using UnityEngine;
 namespace MOMPatch.Detours
 {
     [TargetType(typeof(MetroOverhaul.LoadingExtension))]
-    public class LoadingExtensionDetour : LoadingExtensionBase
+    public class LoadingExtensionDetour //do not inherit ILoadingExtenison or it will be treated as such!
     {
         private LoadMode _cachedMode;
 
         [RedirectMethod]
-        public override void OnLevelLoaded(LoadMode mode)
+        public void OnLevelLoaded(LoadMode mode)
         {
-            base.OnLevelLoaded(mode);
             _cachedMode = mode;
             while (LateBuildUpQueue.Count > 0)
             {
@@ -58,9 +57,8 @@ namespace MOMPatch.Detours
         }
 
         [RedirectMethod]
-        public override void OnLevelUnloading()
+        public void OnLevelUnloading()
         {
-            base.OnLevelUnloading();
             //it appears, the game caches vanilla prefabs even when exiting to main menu, and stations won't load properly on reloading from main menu
             AssetsUpdater.UpdateBuildingsMetroPaths(_cachedMode, true);
             var go = GameObject.Find("MetroOverhaulUISetup");
